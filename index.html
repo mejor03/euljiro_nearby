@@ -29,21 +29,25 @@
   :root{
     --bg:#f7f4fd; --surface:#ffffff; --ink:#3b3550; --muted:#8a84a3;
     --line:#e6e0f3; --accent:#7c5fd3; --accent-ink:#ffffff; --me:#ff8fab;
-    --c1:#cdeee0; --c2:#ffe0cc; --c3:#ffd3e2; --c4:#cfe5ff;
+    --c1:#cdeee0; --c2:#ffe0cc; --c3:#ffd3e2; --c4:#cfe5ff; --c5:#fff0b3;
   }
   @media (prefers-color-scheme: dark){
     :root{ --bg:#1b1726; --surface:#252033; --ink:#efeaff; --muted:#a79fc2;
       --line:#383250; --accent:#b9a4ff; --accent-ink:#1d1830; --me:#ff8fab;
-      --c1:#2f4f45; --c2:#5a4338; --c3:#5a3a47; --c4:#35495f; }
+      --c1:#2f4f45; --c2:#5a4338; --c3:#5a3a47; --c4:#35495f; --c5:#5a5230; }
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0}
   body{font-family:"Jua","Pretendard","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
     background:var(--bg);color:var(--ink);display:flex;flex-direction:column}
-  header{padding:12px 14px;background:var(--surface);border-bottom:1px solid var(--line);
-    display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-  h1{font-size:20px;margin:0 8px 0 0;font-weight:400;display:flex;align-items:center;gap:8px}
-  .logo{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--line)}
+  header{padding:8px 10px;background:var(--surface);border-bottom:1px solid var(--line);
+    display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center}
+  h1{font-size:18px;margin:0;font-weight:400;display:flex;align-items:center;gap:7px;flex:0 0 auto}
+  .logo{width:34px;height:34px;border-radius:50%;object-fit:cover;border:2px solid var(--line)}
+  #area{flex:1 1 0;width:0;min-width:60px;max-width:240px}
+  #housebtn,#searchtoggle{padding:5px 10px;font-size:18px;flex:0 0 auto}
+  #searchrow{display:flex;flex-wrap:wrap;gap:6px;width:100%}
+  #searchrow[hidden]{display:none}
   input,select,button{font:inherit;color:inherit}
   #q,#areaq{flex:1 1 130px;min-width:110px;padding:8px 10px;border:1px solid var(--line);
     border-radius:8px;background:var(--bg)}
@@ -52,8 +56,12 @@
     padding:8px 12px;border-radius:8px}
   button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
   button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-  .chips{display:flex;gap:8px;flex-wrap:wrap;width:100%;margin-top:2px}
-  .chips button{padding:10px 18px;border-radius:20px;font-size:17px;font-weight:400;
+  .chips{display:flex;gap:8px;flex-wrap:nowrap;width:100%;overflow-x:auto;padding:0 28px 5px 0;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    -webkit-mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent);
+    mask-image:linear-gradient(to right,#000 calc(100% - 28px),transparent)}
+  .chips::-webkit-scrollbar{display:none}
+  .chips button{flex:0 0 auto;white-space:nowrap;padding:8px 15px;border-radius:18px;font-size:16px;font-weight:400;
     background:var(--c,var(--surface));border:2px solid transparent;
     box-shadow:0 3px 0 rgba(60,40,110,.14);
     transition:transform .12s, box-shadow .12s}
@@ -72,18 +80,60 @@
     background:var(--surface);box-shadow:0 2px 10px rgba(60,40,110,.25);font-size:15px}
   #toast{position:absolute;left:12px;right:12px;bottom:80px;z-index:11;margin:0 auto;max-width:420px;
     padding:10px 14px;border-radius:14px;background:var(--ink);color:var(--bg);font-size:14px;text-align:center}
+  #homebar{position:absolute;left:12px;right:12px;bottom:84px;z-index:11;margin:0 auto;max-width:460px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:16px;
+    background:var(--surface);box-shadow:0 2px 12px rgba(60,40,110,.3);font-size:15px}
+  #homebar[hidden]{display:none}
+  #homebar a{color:var(--accent);text-decoration:underline;font-size:14px}
+  #homebar button{margin-left:auto;padding:4px 10px}
+  .home{display:flex;flex-direction:column;align-items:center;font-size:30px;line-height:1;
+    filter:drop-shadow(0 3px 4px rgba(60,40,110,.4))}
+  .home span{font-size:12px;background:var(--surface);color:var(--ink);padding:3px 8px;border-radius:999px;margin-top:2px;white-space:nowrap}
+  #housemodal{position:fixed;inset:0;z-index:50;background:rgba(40,30,70,.45);display:flex;align-items:center;justify-content:center;padding:16px}
+  #housemodal[hidden]{display:none}
+  #housemodal .card{width:100%;max-width:420px;max-height:90%;overflow-y:auto;background:var(--surface);
+    border-radius:26px;padding:22px 20px;box-shadow:0 10px 30px rgba(0,0,0,.3);text-align:center}
+  #housemodal .big{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--line)}
+  #housemodal h2{margin:8px 0 4px;font-size:24px;font-weight:400}
+  #housemodal p{margin:0 0 12px;color:var(--muted);font-size:14px;line-height:1.5}
+  #housemodal .row{display:flex;gap:8px}
+  #housemodal .row input{flex:1;min-width:0;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+  #houseres{margin-top:10px;text-align:left}
+  #houseres .pick{display:block;width:100%;text-align:left;margin-bottom:6px;padding:10px 12px;border-radius:12px}
+  #houseres .pick b{display:block;font-weight:400;font-size:16px}
+  #houseres .pick span{display:block;font-size:13px;color:var(--muted)}
+  #housecur{margin:10px 0 0;font-size:14px}
+  #houseskip{margin-top:12px;background:none;border:none;color:var(--muted);text-decoration:underline}
   #here{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:10;
     padding:9px 18px;border-radius:999px;box-shadow:0 2px 10px rgba(60,40,110,.25)}
-  #list{width:320px;overflow-y:auto;background:var(--surface);border-left:1px solid var(--line)}
+  #listpane{width:320px;display:flex;flex-direction:column;min-height:0;background:var(--surface);border-left:1px solid var(--line)}
+  #listtoggle{display:flex;align-items:center;gap:8px;width:100%;border:none;border-bottom:1px solid var(--line);
+    border-radius:0;background:var(--surface);padding:9px 14px;font-size:16px;text-align:left}
+  #listtoggle b{font-weight:400;color:var(--accent)}
+  #chev{margin-left:auto;transition:transform .2s}
+  #list{flex:1;overflow-y:auto}
+  #listpane.collapsed #list{display:none}
+  #listpane.collapsed #chev{transform:rotate(180deg)}
+  #listpane.collapsed{width:52px}
+  #listpane.collapsed #listlabel,#listpane.collapsed #chev{display:none}
   #status{padding:12px 14px;color:var(--muted);font-size:14px}
   .item{padding:11px 14px;border-bottom:1px solid var(--line);cursor:pointer}
   .item:hover,.item.on{background:var(--bg)}
   .item b{display:block;font-size:15px}
   .item span{display:block;font-size:13px;color:var(--muted);margin-top:2px}
   .item .dist{color:var(--accent);font-weight:600}
+  @media (max-width:480px){
+    h1{font-size:15px;gap:5px}
+    .logo{width:30px;height:30px}
+    #housebtn,#searchtoggle{padding:5px 8px}
+    #area{min-width:96px}
+    header{gap:6px}
+  }
   @media (max-width:720px){
     main{flex-direction:column}
-    #list{width:100%;height:38%;border-left:0;border-top:1px solid var(--line)}
+    #listpane{width:100%;height:32%;border-left:0;border-top:1px solid var(--line)}
+    #listpane.collapsed{width:100%;height:auto}
+    #listpane.collapsed #listlabel,#listpane.collapsed #chev{display:inline}
   }
 </style>
 </head>
@@ -91,17 +141,21 @@
 <header>
   <h1><img class="logo" src="./icon-192.png" alt="">을지로 개미지도</h1>
   <select id="area" aria-label="지역 선택"></select>
-  <input id="areaq" type="search" placeholder="다른 지역 (예: 판교역)">
-  <input id="q" type="search" placeholder="예: 카페, 약국, 칼국수" value="카페">
-  <select id="radius" aria-label="검색 반경">
-    <option value="500">500m</option>
-    <option value="1000" selected>1km</option>
-    <option value="2000">2km</option>
-    <option value="3000">3km</option>
-    <option value="5000">5km</option>
-  </select>
-  <button class="primary" id="go">검색</button>
+  <button id="housebtn" title="일개미 하우스 설정">🏠</button>
+  <button id="searchtoggle" title="직접 검색하기" aria-expanded="false">🔍</button>
   <button id="keybtn" title="저장된 JavaScript 키를 지우고 다시 입력해요">키 변경</button>
+  <div id="searchrow" hidden>
+    <input id="areaq" type="search" placeholder="다른 지역 (예: 판교역)">
+    <input id="q" type="search" placeholder="예: 카페, 약국, 칼국수" value="카페">
+    <select id="radius" aria-label="검색 반경">
+      <option value="500">500m</option>
+      <option value="1000" selected>1km</option>
+      <option value="2000">2km</option>
+      <option value="3000">3km</option>
+      <option value="5000">5km</option>
+    </select>
+    <button class="primary" id="go">검색</button>
+  </div>
   <div class="chips" id="chips"></div>
 </header>
 <main>
@@ -109,14 +163,32 @@
     <div id="map"></div>
     <button id="here" class="primary" hidden>이 지역에서 검색</button>
     <div id="toast" hidden></div>
+    <div id="homebar" hidden><span id="homemsg"></span><a id="homelink" target="_blank" rel="noopener">자세한 길찾기</a><button id="homeclose" aria-label="닫기">✕</button></div>
     <button id="locbtn" title="일개미의 현재 위치로 이동">📍 일개미 위치</button>
   </div>
-  <aside id="list"><div id="status">불러오는 중…</div></aside>
+  <aside id="listpane">
+    <button id="listtoggle" aria-expanded="true" title="목록 접기/펴기">
+      <span>📋</span><span id="listlabel">목록 <b id="listcount"></b></span><span id="chev">▾</span>
+    </button>
+    <div id="list"><div id="status">불러오는 중…</div></div>
+  </aside>
 </main>
+
+<div id="housemodal" hidden>
+  <div class="card">
+    <img class="big" src="./icon-192.png" alt="">
+    <h2>🏠 일개미 하우스</h2>
+    <p>퇴근길 안내를 위해 집 위치를 알려주세요.<br>아파트 이름이나 동네 정도면 충분해요!<br>(이 폰의 브라우저에만 저장되고, 다른 사람은 볼 수 없어요)</p>
+    <div class="row"><input id="houseq" type="search" placeholder="예: OO아파트, OO동"><button class="primary" id="housego">찾기</button></div>
+    <div id="houseres"></div>
+    <div id="housecur" hidden></div>
+    <button id="houseskip">나중에 할게요</button>
+  </div>
+</div>
 
 <script>
   const $ = id => document.getElementById(id);
-  const setStatus = t => { $("list").innerHTML = '<div id="status"></div>'; $("status").textContent = t; };
+  const setStatus = t => { $("list").innerHTML = '<div id="status"></div>'; $("status").textContent = t; $("listcount").textContent = ""; };
   const esc = t => String(t).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
   // JavaScript 키는 처음 한 번만 입력하면 이 브라우저에 저장돼요.
@@ -128,6 +200,18 @@
     KAKAO_KEY = (prompt("카카오 개발자 콘솔의 JavaScript 키를 붙여넣어 주세요.\n(한 번만 입력하면 이 브라우저에 저장돼요)") || "").trim();
     if(KAKAO_KEY){ try { localStorage.setItem("kakaoKey", KAKAO_KEY); } catch(e) {} }
   }
+
+  // 화면 토글은 지도와 상관없이 항상 동작해요
+  $("searchtoggle").onclick = () => {
+    const row = $("searchrow");
+    row.hidden = !row.hidden;
+    $("searchtoggle").setAttribute("aria-expanded", String(!row.hidden));
+    if(!row.hidden) $("q").focus();
+  };
+  $("listtoggle").onclick = () => {
+    const closed = $("listpane").classList.toggle("collapsed");
+    $("listtoggle").setAttribute("aria-expanded", String(!closed));
+  };
 
   $("keybtn").onclick = () => {
     try { localStorage.removeItem("kakaoKey"); } catch(e) {}
@@ -156,9 +240,15 @@
     SITUATIONS.forEach(s => {
       const b = document.createElement("button");
       b.textContent = s.label;
-      b.title = "검색어: " + s.kws.join(", ");
+      b.title = s.kws ? "검색어: " + s.kws.join(", ") : "일개미 하우스로 가는 방향 보기";
       b.style.setProperty("--c", s.c);
       b.onclick = () => {
+        if(s.action === "home"){
+          document.querySelectorAll(".chips button").forEach(n => n.classList.remove("on"));
+          b.classList.add("on");
+          goHome();
+          return;
+        }
         activeKws = s.kws;
         activeRank = !!s.rank;
         $("q").value = s.kws.join(", ");
@@ -219,11 +309,17 @@
         setMe(new kakao.maps.LatLng(d[0].y, d[0].x), false);
       });
     });
-    $("locbtn").onclick = locate;
-    locate();
+    $("locbtn").onclick = () => locate();
+    if(window.ResizeObserver) new ResizeObserver(() => map.relayout()).observe($("map"));
+    $("housebtn").onclick = openHouse;
+    $("houseskip").onclick = skipHouse;
+    $("housego").onclick = houseSearch;
+    $("houseq").addEventListener("keydown", e => { if(e.key === "Enter") houseSearch(); });
+    $("homeclose").onclick = clearRoute;
+    locate(() => { if(!getHouse() && !getSkip()) openHouse(); });
   }
 
-  function setMe(pos, isFallback){
+  function setMe(pos, isFallback, noSearch){
     myPos = pos;
     $("here").hidden = true;
     map.setCenter(pos);
@@ -235,7 +331,123 @@
     });
     meMarker.setMap(map);
     if(isFallback) setStatus("현재 위치를 가져오지 못해 서울시청 기준으로 검색해요. 브라우저의 위치 권한을 확인해 주세요.");
-    search(isFallback);
+    if(!noSearch) search();
+  }
+
+  // ===== 일개미 하우스 (이 폰의 브라우저에만 저장) =====
+  const HOUSE_KEY = "antHouse", SKIP_KEY = "antHouseSkip";
+  const getHouse = () => { try { return JSON.parse(localStorage.getItem(HOUSE_KEY) || "null"); } catch(e) { return null; } };
+  const setHouse = h => { try { localStorage.setItem(HOUSE_KEY, JSON.stringify(h)); } catch(e) {} };
+  const delHouse = () => { try { localStorage.removeItem(HOUSE_KEY); } catch(e) {} };
+  const getSkip = () => { try { return localStorage.getItem(SKIP_KEY) === "1"; } catch(e) { return false; } };
+  const setSkip = () => { try { localStorage.setItem(SKIP_KEY, "1"); } catch(e) {} };
+
+  function openHouse(){
+    $("houseres").innerHTML = "";
+    $("houseq").value = "";
+    const h = getHouse(), cur = $("housecur");
+    if(h){
+      cur.hidden = false;
+      cur.innerHTML = "";
+      cur.append("지금 등록된 집: " + h.n + " ");
+      const d = document.createElement("button");
+      d.textContent = "삭제"; d.style.padding = "3px 10px";
+      d.onclick = () => { delHouse(); clearRoute(); cur.hidden = true; toast("일개미 하우스를 지웠어요."); };
+      cur.appendChild(d);
+    } else { cur.hidden = true; }
+    $("housemodal").hidden = false;
+    $("houseq").focus();
+  }
+  function closeHouse(){ $("housemodal").hidden = true; }
+  function skipHouse(){ setSkip(); closeHouse(); }
+
+  function houseSearch(){
+    const q = $("houseq").value.trim();
+    if(!q) return;
+    ps.keywordSearch(q, (d, st) => {
+      const box = $("houseres");
+      box.innerHTML = "";
+      if(st !== kakao.maps.services.Status.OK || !d.length){
+        box.textContent = "못 찾았어요. 아파트 이름이나 동네 이름으로 다시 적어 주세요.";
+        return;
+      }
+      d.slice(0, 6).forEach(p => {
+        const b = document.createElement("button");
+        b.className = "pick";
+        b.innerHTML = "<b>" + esc(p.place_name) + "</b><span>" + esc(p.address_name) + "</span>";
+        b.onclick = () => {
+          setHouse({ n: p.place_name, a: p.address_name, x: +p.x, y: +p.y });
+          closeHouse();
+          toast("일개미 하우스 등록 완료 🏠 이제 🪫 배터리 방전을 눌러보세요!");
+        };
+        box.appendChild(b);
+      });
+    });
+  }
+
+  // ===== 배터리 방전: 집 방향 표시 =====
+  let routeLine = null, houseOv = null;
+  function clearRoute(){
+    if(routeLine){ routeLine.setMap(null); routeLine = null; }
+    if(houseOv){ houseOv.setMap(null); houseOv = null; }
+    $("homebar").hidden = true;
+  }
+  function km(a, b){
+    const R = 6371, rad = x => x * Math.PI / 180;
+    const dLat = rad(b.getLat() - a.getLat()), dLng = rad(b.getLng() - a.getLng());
+    const h = Math.sin(dLat/2)**2 + Math.cos(rad(a.getLat())) * Math.cos(rad(b.getLat())) * Math.sin(dLng/2)**2;
+    return 2 * R * Math.asin(Math.sqrt(h));
+  }
+  // 살짝 휘어진 곡선 (휘이잉~)
+  function arc(a, b){
+    const ax = a.getLng(), ay = a.getLat(), bx = b.getLng(), by = b.getLat();
+    const cx = (ax + bx) / 2 - (by - ay) * 0.18, cy = (ay + by) / 2 + (bx - ax) * 0.18;
+    const pts = [];
+    for(let i = 0; i <= 40; i++){
+      const t = i / 40, u = 1 - t;
+      pts.push(new kakao.maps.LatLng(u*u*ay + 2*u*t*cy + t*t*by, u*u*ax + 2*u*t*cx + t*t*bx));
+    }
+    return pts;
+  }
+
+  function goHome(){
+    const h = getHouse();
+    if(!h){ openHouse(); return; }
+    const draw = from => {
+      clearRoute(); clearMarkers();
+      if(circle) circle.setMap(null);
+      const to = new kakao.maps.LatLng(h.y, h.x);
+      routeLine = new kakao.maps.Polyline({
+        path: arc(from, to), strokeWeight: 6, strokeColor: "#7c5fd3",
+        strokeOpacity: .9, strokeStyle: "shortdash", endArrow: true
+      });
+      routeLine.setMap(map);
+      houseOv = new kakao.maps.CustomOverlay({
+        position: to, yAnchor: 1, zIndex: 3,
+        content: '<div class="home">🏠<span>일개미 하우스</span></div>'
+      });
+      houseOv.setMap(map);
+      const b = new kakao.maps.LatLngBounds();
+      b.extend(from); b.extend(to);
+      map.setBounds(b, 90, 60, 150, 60);
+      const d = km(from, to);
+      $("homemsg").textContent = "🪫 집까지 직선 " + (d < 1 ? Math.round(d * 1000) + "m" : d.toFixed(1) + "km") + " · 휘이잉~";
+      $("homelink").href = "https://map.kakao.com/link/to/" + encodeURIComponent("일개미 하우스") + "," + h.y + "," + h.x;
+      $("homebar").hidden = false;
+      setStatus("🪫 배터리 방전! 일개미 하우스로 휘이잉 가요 🏠");
+    };
+    if(!navigator.geolocation){ draw(myPos); toast("위치를 쓸 수 없어서 지도 중심에서 그렸어요."); return; }
+    setStatus("일개미 위치를 찾는 중…");
+    navigator.geolocation.getCurrentPosition(
+      p => {
+        const here = new kakao.maps.LatLng(p.coords.latitude, p.coords.longitude);
+        $("area").value = "me";
+        setMe(here, false, true);
+        draw(here);
+      },
+      () => { draw(myPos); toast("현재 위치를 못 가져와서 지도 중심에서 그렸어요."); },
+      { enableHighAccuracy:true, timeout:8000, maximumAge:60000 }
+    );
   }
 
   let toastTimer;
@@ -247,13 +459,15 @@
   }
 
   // 현재 위치 → 실패하면 기본 위치(을지로3가역)
-  function locate(){
+  function locate(done){
+    const fin = () => { if(typeof done === "function") done(); };
     const fb = () => {
       $("area").value = "0";
       setMe(new kakao.maps.LatLng(AREAS[0].y, AREAS[0].x), false);
     };
     if(!navigator.geolocation){
       fb(); toast("이 기기에서는 위치를 쓸 수 없어서 을지로3가역 기준으로 보여드려요.");
+      fin();
       return;
     }
     setStatus("현재 위치를 찾는 중…");
@@ -261,9 +475,11 @@
       p => {
         $("area").value = "me";
         setMe(new kakao.maps.LatLng(p.coords.latitude, p.coords.longitude), false);
+        fin();
       },
       () => {
         fb();
+        fin();
         toast("현재 위치를 가져오지 못해 을지로3가역 기준으로 보여드려요. 위치 권한을 허용하면 일개미 위치로 볼 수 있어요.");
       },
       { enableHighAccuracy:true, timeout:8000, maximumAge:60000 }
@@ -274,7 +490,8 @@
     { label:"💊 아플 때",      kws:["약국"], radius:1000, c:"var(--c1)" },
     { label:"🍪 간식이 땡길 때", kws:["편의점"], radius:500, c:"var(--c2)" },
     { label:"💸 월급 받은 날",  kws:["오마카세","파인다이닝","한우 전문점","스테이크 레스토랑"], radius:3000, c:"var(--c3)" },
-    { label:"🍽️ 웨이팅 맛집",   kws:["맛집"], radius:3000, rank:true, c:"var(--c4)" }
+    { label:"🍽️ 웨이팅 맛집",   kws:["맛집"], radius:3000, rank:true, c:"var(--c4)" },
+    { label:"🪫 배터리 방전", action:"home", c:"var(--c5)" }
   ];
   let activeKws = null;
   let activeRank = false;
@@ -301,6 +518,7 @@
     const kws = activeKws || [$("q").value.trim()];
     if(!kws[0]) return;
     const radius = +$("radius").value;
+    clearRoute();
 
     if(circle) circle.setMap(null);
     circle = new kakao.maps.Circle({
@@ -339,6 +557,7 @@
   function render(data){
     const list = $("list");
     list.innerHTML = "";
+    $("listcount").textContent = data.length + "곳";
     const bounds = new kakao.maps.LatLngBounds();
     bounds.extend(myPos);
     data.forEach((p, i) => {
