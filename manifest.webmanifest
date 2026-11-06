@@ -1,6 +1,6 @@
 {
-  "name": "주변 장소 찾기",
-  "short_name": "주변 장소",
+  "name": "을지로 개미지도",
+  "short_name": "개미지도",
   "lang": "ko",
   "start_url": "./",
   "scope": "./",
