@@ -57,6 +57,10 @@
   main{flex:1;display:flex;min-height:0}
   #mapwrap{flex:1;min-width:0;min-height:0;position:relative}
   #map{width:100%;height:100%}
+  #locbtn{position:absolute;right:12px;bottom:30px;z-index:10;padding:10px 16px;border-radius:999px;
+    background:var(--surface);box-shadow:0 2px 10px rgba(60,40,110,.25);font-size:15px}
+  #toast{position:absolute;left:12px;right:12px;bottom:80px;z-index:11;margin:0 auto;max-width:420px;
+    padding:10px 14px;border-radius:14px;background:var(--ink);color:var(--bg);font-size:14px;text-align:center}
   #here{position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:10;
     padding:9px 18px;border-radius:999px;box-shadow:0 2px 10px rgba(60,40,110,.25)}
   #list{width:320px;overflow-y:auto;background:var(--surface);border-left:1px solid var(--line)}
@@ -93,6 +97,8 @@
   <div id="mapwrap">
     <div id="map"></div>
     <button id="here" class="primary" hidden>이 지역에서 검색</button>
+    <div id="toast" hidden></div>
+    <button id="locbtn" title="일개미의 현재 위치로 이동">📍 일개미 위치</button>
   </div>
   <aside id="list"><div id="status">불러오는 중…</div></aside>
 </main>
@@ -162,6 +168,9 @@
     $("q").addEventListener("keydown", e => { if(e.key === "Enter") typed(); });
     $("radius").onchange = search;
 
+    const me = document.createElement("option");
+    me.value = "me"; me.textContent = "📍 일개미 위치";
+    $("area").appendChild(me);
     AREAS.forEach((a, i) => {
       const o = document.createElement("option");
       o.value = i; o.textContent = a.n;
@@ -180,6 +189,7 @@
     };
     $("area").onchange = () => {
       if($("area").value === "custom") return;
+      if($("area").value === "me"){ locate(); return; }
       const a = AREAS[+$("area").value];
       setMe(new kakao.maps.LatLng(a.y, a.x), false);
     };
@@ -198,7 +208,8 @@
         setMe(new kakao.maps.LatLng(d[0].y, d[0].x), false);
       });
     });
-    setMe(new kakao.maps.LatLng(AREAS[0].y, AREAS[0].x), false);
+    $("locbtn").onclick = locate;
+    locate();
   }
 
   function setMe(pos, isFallback){
@@ -209,11 +220,43 @@
     meMarker = new kakao.maps.CustomOverlay({
       position: pos, yAnchor: 0.5, xAnchor: 0.5,
       zIndex: 3,
-      content: '<img class="me" src="./icon-192.png" alt="내 위치">'
+      content: '<img class="me" src="./icon-192.png" alt="일개미">'
     });
     meMarker.setMap(map);
     if(isFallback) setStatus("현재 위치를 가져오지 못해 서울시청 기준으로 검색해요. 브라우저의 위치 권한을 확인해 주세요.");
     search(isFallback);
+  }
+
+  let toastTimer;
+  function toast(t){
+    const el = $("toast");
+    el.textContent = t; el.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => { el.hidden = true; }, 5000);
+  }
+
+  // 현재 위치 → 실패하면 기본 위치(을지로3가역)
+  function locate(){
+    const fb = () => {
+      $("area").value = "0";
+      setMe(new kakao.maps.LatLng(AREAS[0].y, AREAS[0].x), false);
+    };
+    if(!navigator.geolocation){
+      fb(); toast("이 기기에서는 위치를 쓸 수 없어서 을지로3가역 기준으로 보여드려요.");
+      return;
+    }
+    setStatus("현재 위치를 찾는 중…");
+    navigator.geolocation.getCurrentPosition(
+      p => {
+        $("area").value = "me";
+        setMe(new kakao.maps.LatLng(p.coords.latitude, p.coords.longitude), false);
+      },
+      () => {
+        fb();
+        toast("현재 위치를 가져오지 못해 을지로3가역 기준으로 보여드려요. 위치 권한을 허용하면 일개미 위치로 볼 수 있어요.");
+      },
+      { enableHighAccuracy:true, timeout:8000, maximumAge:60000 }
+    );
   }
 
   const SITUATIONS = [
